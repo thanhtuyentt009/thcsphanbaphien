@@ -3,7 +3,7 @@
 // ==========================================
 const CONFIG = {
     // Đường link Google Apps Script
-    GOOGLE_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbxywWJKN1uhMV4BuknfF2zomrkIMuS_7zEvjD10gIDFmFe_7SuI6LowqSrNGdRu0864/exec",
+    GOOGLE_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwhDm8AmwYt77sbv_iXtIqVw_PbFhxNP7SfWVU31NNjbPyZNaHrpqLyZ7pv665hn694/exec",
     
     // Mật khẩu đăng nhập dành cho giáo viên
     ADMIN_PASS: "123456",
@@ -12,7 +12,7 @@ const CONFIG = {
     SCHOOL_YEAR: "2025-2026",
     
     // Khai báo tên trường (Đã sửa thành viết hoa SCHOOL_NAME)
-    SCHOOL_NAME: "THCS Lê Quý Đôn"
+    SCHOOL_NAME: "THCS Phan Bá Phiến"
 };
 
 // ==========================================
