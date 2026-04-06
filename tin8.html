@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đề ôn tự luyện - Tin học 8</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="config.js"></script>
+
+    <style>
+        :root { --primary: #2563eb; --primary-hover: #1d4ed8; --bg-color: #f1f5f9; --surface: #ffffff; --text-main: #0f172a; --border: #cbd5e1; --success: #10b981; --warning: #f59e0b; --danger: #ef4444; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 20px; }
+
+        .exam-layout { max-width: 1200px; margin: 0 auto; display: flex; gap: 25px; align-items: flex-start; }
+        .exam-main { flex: 1; min-width: 0; }
+        .exam-sidebar { width: 320px; flex-shrink: 0; position: sticky; top: 20px; display: flex; flex-direction: column; gap: 20px; z-index: 100; }
+
+        /* GIAO DIỆN HEADER */
+        .classic-header { background: white; border: 1px solid var(--border); margin-bottom: 25px; font-family: 'Times New Roman', Times, serif; color: #000; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .classic-header-top { display: flex; flex-wrap: wrap; }
+        .classic-left { flex: 1.3; min-width: 300px; padding: 20px 25px; border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 18px; }
+        .classic-right { flex: 1; min-width: 250px; padding: 20px; text-align: center; display: flex; flex-direction: column; justify-content: center; gap: 12px; }
+        .classic-header-bottom { border-top: 1px solid var(--border); padding: 12px; text-align: center; font-style: italic; color: #475569; font-size: 16px; }
+        .info-line { display: flex; align-items: flex-end; gap: 8px; white-space: nowrap; font-size: 18px; font-weight: bold; }
+        .dotted-line { border-bottom: 2px dotted #000; flex: 1; color: var(--primary); font-weight: bold; padding: 0 10px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; font-size: 18px;}
+        .line-short { flex: 0.3; min-width: 60px; }
+        .exam-title { font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 0.5px;}
+        .exam-subject { font-weight: bold; font-size: 18px; text-transform: uppercase; }
+
+        .section-title { font-size: 16px; font-weight: bold; color: var(--surface); background: var(--primary); padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; text-transform: uppercase; }
+
+        .question-card { background: var(--surface); padding: 25px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid var(--border); transition: 0.2s ease; scroll-margin-top: 20px; }
+        .question-card:hover { border-color: #93c5fd; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .question-text { font-size: 16px; font-weight: 600; margin-bottom: 15px; line-height: 1.5; white-space: pre-wrap;}
+        .question-text span { color: var(--primary); }
+
+        .mcq-options { display: grid; gap: 10px; }
+        .grid-1 { grid-template-columns: 1fr; }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+
+        .mcq-option { display: flex; align-items: center; padding: 12px 15px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; transition: 0.2s; background: #f8fafc; height: 100%; box-sizing: border-box; font-size: 15px;}
+        .mcq-option:hover { background: #eff6ff; border-color: #bfdbfe; }
+        .mcq-option input[type="radio"] { margin-right: 12px; transform: scale(1.2); cursor: pointer; flex-shrink: 0; }
+
+        .tf-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .tf-table th, .tf-table td { border: 1px solid var(--border); padding: 12px; text-align: center; }
+        .tf-table th { background: #f1f5f9; font-weight: 600; }
+        .tf-table .tf-text { text-align: left; font-size: 15px; }
+        .tf-radio { transform: scale(1.3); cursor: pointer; }
+        
+        .rte-container { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+        .rte-toolbar { background: #f1f5f9; padding: 8px; border-bottom: 1px solid var(--border); display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
+        .rte-btn { background: white; border: 1px solid var(--border); padding: 6px 10px; border-radius: 4px; cursor: pointer; color: var(--text-main); font-size: 14px; transition: 0.2s; display: inline-flex; align-items: center; gap: 5px;}
+        .rte-btn:hover { background: #e2e8f0; border-color: #94a3b8; color: var(--primary); }
+        .rte-btn select, .rte-btn input[type="color"] { border: none; background: transparent; cursor: pointer; outline: none; }
+        .rte-btn input[type="file"] { display: none; }
+        
+        .essay-box { width: 100%; min-height: 200px; padding: 15px; font-size: 15px; font-family: inherit; outline: none; box-sizing: border-box; background: white; overflow-y: auto; line-height: 1.6; }
+        .essay-box:focus { background: #fafafa; }
+        .essay-box img { max-width: 100%; height: auto; border-radius: 4px; margin: 5px 0; border: 1px solid #e2e8f0;}
+
+        .sidebar-box { background: var(--surface); padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid var(--border); }
+        .timer-title { text-align: center; font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 8px;}
+        .timer-display { background: #eff6ff; color: var(--danger); padding: 15px; border-radius: 8px; font-size: 32px; font-weight: bold; text-align: center; border: 2px solid #bfdbfe; font-family: monospace; letter-spacing: 2px; }
+        .palette-title { font-size: 14px; font-weight: bold; margin-bottom: 15px; border-bottom: 1px dashed var(--border); padding-bottom: 10px; }
+        .palette-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 15px; }
+        .palette-btn { aspect-ratio: 1; border: 1px solid var(--border); background: var(--surface); border-radius: 6px; font-weight: 600; font-size: 14px; color: var(--text-main); cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; padding: 0; }
+        .palette-btn:hover { border-color: var(--primary); color: var(--primary); background: #eff6ff;}
+        .palette-btn.answered { background: var(--primary); color: white; border-color: var(--primary); }
+        .palette-legend { display: flex; justify-content: space-between; font-size: 12px; color: #64748b; }
+        .legend-item { display: flex; align-items: center; gap: 5px; }
+        .box-color { width: 12px; height: 12px; border-radius: 3px; border: 1px solid var(--border); }
+        .box-color.done { background: var(--primary); border-color: var(--primary); }
+        .box-color.not-done { background: white; }
+
+        .btn-submit { width: 100%; background: var(--success); color: white; border: none; padding: 15px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3); text-transform: uppercase; }
+        .btn-submit:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4); }
+        .btn-submit:disabled { background: #94a3b8; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        /* MODAL */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.75); display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(3px); }
+        .modal-content { background: white; width: 400px; max-width: 90%; border-radius: 12px; overflow: hidden; animation: slideDown 0.3s ease; box-shadow: 0 25px 50px rgba(0,0,0,0.2); text-align: center; }
+        @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-body { padding: 30px 20px 20px; }
+        .modal-body i { font-size: 55px; color: var(--primary); margin-bottom: 15px; }
+        .modal-body h3 { margin: 0 0 10px; color: var(--text-main); font-size: 20px; text-transform: uppercase;}
+        .modal-body p { margin: 0; color: #475569; font-size: 15px; line-height: 1.5; }
+        .modal-footer { padding: 15px 20px; background: #f8fafc; border-top: 1px solid var(--border); display: flex; justify-content: center; gap: 10px; }
+        .btn-cancel { padding: 10px 20px; border: none; background: #94a3b8; color: white; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; font-size: 14px;}
+        .btn-cancel:hover { background: #64748b; }
+        .btn-confirm { padding: 10px 20px; border: none; background: var(--primary); color: white; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; font-size: 14px;}
+        .btn-confirm:hover { background: var(--primary-hover); }
+
+        /* TOAST */
+        #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { min-width: 250px; background: white; color: var(--text-main); padding: 15px 20px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 14px; animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards; border-left: 4px solid var(--primary); }
+        .toast.success { border-left-color: var(--success); }
+        .toast.error { border-left-color: var(--danger); }
+        .toast.warning { border-left-color: var(--warning); }
+        .toast i { font-size: 20px; }
+        .toast.success i { color: var(--success); }
+        .toast.error i { color: var(--danger); }
+        .toast.warning i { color: var(--warning); }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+
+        @media (max-width: 992px) {
+            .exam-layout { flex-direction: column; }
+            .exam-sidebar { width: 100%; position: static; order: -1; }
+            .palette-grid { grid-template-columns: repeat(10, 1fr); }
+        }
+        @media (max-width: 600px) {
+            .classic-left { border-right: none; border-bottom: 1px solid var(--border); }
+            .info-line { flex-wrap: wrap; }
+            .line-short { flex: 1; }
+            .palette-grid { grid-template-columns: repeat(7, 1fr); }
+            .grid-2 { grid-template-columns: 1fr; }
+            .tf-table th:nth-child(2), .tf-table th:nth-child(3) { width: 50px; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="toast-container"></div>
+
+<div class="exam-layout">
+    <div class="exam-main">
+        
+        <div class="classic-header">
+            <div class="classic-header-top">
+                <div class="classic-left">
+                    <div class="info-line">
+                        TRƯỜNG <span class="dotted-line" id="display-school">---</span>
+                    </div>
+                    <div class="info-line">
+                        Họ và tên: <span class="dotted-line" id="display-name">---</span>
+                        Lớp <span class="dotted-line line-short" id="display-class">---</span>
+                    </div>
+                </div>
+                <div class="classic-right">
+                    <div class="exam-title">ĐỀ ÔN TẬP TỰ LUYỆN</div>
+                    <div class="exam-subject">MÔN: <span style="color: var(--primary);">TIN HỌC 8</span></div>
+                </div>
+            </div>
+            <div class="classic-header-bottom">
+                Thời gian làm bài: 45 phút (không kể thời gian giao đề)
+            </div>
+        </div>
+
+        <div id="quiz-container"></div>
+    </div>
+
+    <div class="exam-sidebar">
+        <div class="sidebar-box">
+            <div class="timer-title">Thời gian làm bài</div>
+            <div class="timer-display" id="timer">45:00</div>
+        </div>
+
+        <div class="sidebar-box">
+            <div class="palette-title"><i class="fa-solid fa-table-cells-large"></i> BẢNG CÂU HỎI</div>
+            <div class="palette-grid" id="palette-container"></div>
+            <div class="palette-legend">
+                <div class="legend-item"><div class="box-color done"></div> Đã làm</div>
+                <div class="legend-item"><div class="box-color not-done"></div> Chưa làm</div>
+            </div>
+        </div>
+
+        <button class="btn-submit" id="btn-submit" onclick="openSubmitModal()"><i class="fa-solid fa-paper-plane"></i> Nộp bài thi</button>
+    </div>
+</div>
+
+<div id="submitModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-body">
+            <i class="fa-solid fa-circle-question"></i>
+            <h3>Xác nhận nộp bài</h3>
+            <p id="submit-msg">Bạn có chắc chắn muốn nộp bài thi?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeSubmitModal()">Quay lại làm tiếp</button>
+            <button class="btn-confirm" onclick="executeSubmit()"><i class="fa-solid fa-paper-plane"></i> Nộp bài ngay</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==========================================
+    // 1. NGÂN HÀNG CÂU HỎI (TIN HỌC 8 - KNTT)
+    // SỐ LƯỢNG: GẤP 3 LẦN MA TRẬN
+    // ==========================================
+    
+    // --- NGÂN HÀNG MCQ (36 CÂU) ---
+    const allMcqBank = [
+        // Bài 9a: Tạo đầu trang, chân trang cho văn bản (6 câu NB - Lấy 2)
+        { lesson: "9a", lvl: "NB", q: "Phần đầu trang (Header) nằm ở vị trí nào của trang văn bản?", options: ["Phía trên cùng của trang", "Phía dưới cùng của trang", "Bên lề trái của trang", "Ở giữa trang văn bản"], correct: 0, cols: 2 },
+        { lesson: "9a", lvl: "NB", q: "Phần chân trang (Footer) thường dùng để chứa thông tin gì?", options: ["Nội dung chi tiết của bài văn", "Chữ ký người viết", "Số trang, thông tin bản quyền, tên tác giả", "Hình ảnh lớn minh họa"], correct: 2, cols: 1 },
+        { lesson: "9a", lvl: "NB", q: "Để chèn số trang vào văn bản trong MS Word, ta chọn thẻ lệnh nào?", options: ["Home", "Insert", "Design", "Layout"], correct: 1, cols: 2 },
+        { lesson: "9a", lvl: "NB", q: "Nút lệnh Page Number thường cho phép đặt số trang ở những vị trí nào?", options: ["Chỉ ở đầu trang", "Chỉ ở chân trang", "Đầu trang, chân trang hoặc lề trang", "Chỉ ở giữa trang"], correct: 2, cols: 1 },
+        { lesson: "9a", lvl: "NB", q: "Để thoát khỏi chế độ chỉnh sửa Header/Footer, ta có thể thao tác như thế nào?", options: ["Nhấn phím Delete", "Nhấn đúp chuột vào phần nội dung chính của văn bản", "Lưu lại tệp", "Đóng phần mềm Word"], correct: 1, cols: 1 },
+        { lesson: "9a", lvl: "NB", q: "Khi gõ một dòng chữ vào Header của trang 1, dòng chữ đó sẽ xuất hiện ở đâu?", options: ["Chỉ ở trang 1", "Tất cả các trang trong văn bản", "Chỉ các trang chẵn", "Chỉ trang cuối cùng"], correct: 1, cols: 1 },
+
+        // Bài 10a: Định dạng nâng cao cho trang chiếu (12 NB, 3 TH - Lấy 4 NB, 1 TH)
+        { lesson: "10a", lvl: "NB", q: "Trong phần mềm trình chiếu, để định dạng màu chữ ta sử dụng nút lệnh nào trong thẻ Home?", options: ["Font Size", "Font Color", "Bold", "Text Align"], correct: 1, cols: 2 },
+        { lesson: "10a", lvl: "NB", q: "Để chèn Header & Footer trong PowerPoint, ta phải vào dải lệnh nào?", options: ["Design", "Transitions", "Insert", "Slide Show"], correct: 2, cols: 2 },
+        { lesson: "10a", lvl: "NB", q: "Trong cửa sổ Header and Footer của PowerPoint, mục 'Slide number' dùng để làm gì?", options: ["Đổi màu nền trang", "Hiển thị số trang chiếu", "Thêm hình ảnh", "Đếm số dòng chữ"], correct: 1, cols: 1 },
+        { lesson: "10a", lvl: "NB", q: "Tùy chọn 'Don't show on title slide' trong hộp thoại Header/Footer có ý nghĩa gì?", options: ["Không cho phép chỉnh sửa tiêu đề", "Không hiển thị đầu trang/chân trang trên trang tiêu đề", "Xóa trang tiêu đề", "Không in trang tiêu đề ra giấy"], correct: 1, cols: 1 },
+        { lesson: "10a", lvl: "NB", q: "Nút lệnh 'Apply to All' trong hộp thoại Header & Footer dùng để làm gì?", options: ["Áp dụng cho slide hiện tại", "Xóa toàn bộ hiệu ứng", "Áp dụng định dạng cho tất cả các trang chiếu", "Lưu bài thuyết trình"], correct: 2, cols: 1 },
+        { lesson: "10a", lvl: "NB", q: "Trong phối màu, các màu Đỏ, Cam, Vàng thuộc nhóm màu gì?", options: ["Màu lạnh", "Màu trung tính", "Màu nóng", "Màu tối"], correct: 2, cols: 2 },
+        { lesson: "10a", lvl: "NB", q: "Các màu Xanh lục, Xanh lam thuộc nhóm màu gì?", options: ["Màu lạnh", "Màu nóng", "Màu trung tính", "Màu sáng"], correct: 0, cols: 2 },
+        { lesson: "10a", lvl: "NB", q: "Trắng, Đen, Xám thường được xếp vào nhóm màu nào?", options: ["Màu nóng", "Màu lạnh", "Màu trung tính", "Màu rực rỡ"], correct: 2, cols: 2 },
+        { lesson: "10a", lvl: "NB", q: "Để người xem dễ đọc, kích thước chữ nội dung trên trang chiếu thường được khuyến nghị tối thiểu là bao nhiêu?", options: ["12 pt", "16 pt", "24 pt", "100 pt"], correct: 2, cols: 2 },
+        { lesson: "10a", lvl: "NB", q: "Để làm nổi bật tiêu đề trang, ta thường dùng phương pháp nào?", options: ["Cỡ chữ lớn hơn nội dung và in đậm", "Chữ nhỏ hơn nội dung", "Cùng cỡ chữ với nội dung", "Viết nghiêng và mờ đi"], correct: 0, cols: 1 },
+        { lesson: "10a", lvl: "NB", q: "Có thể chèn ngày tháng hiện tại vào chân trang chiếu được không?", options: ["Không thể", "Chỉ chèn được bằng cách gõ tay", "Có, sử dụng tùy chọn Date and time", "Chỉ khi máy tính có kết nối Internet"], correct: 2, cols: 1 },
+        { lesson: "10a", lvl: "NB", q: "Màu chữ và màu nền như thế nào được gọi là có độ tương phản cao?", options: ["Chữ đỏ trên nền cam", "Chữ đen trên nền trắng", "Chữ xanh dương trên nền xanh lá", "Chữ xám trên nền trắng"], correct: 1, cols: 1 },
+        
+        { lesson: "10a", lvl: "TH", q: "Tại sao trên trang chiếu nên sử dụng sự tương phản màu sắc mạnh giữa chữ và nền?", options: ["Để tệp nhẹ hơn", "Để văn bản nổi bật, người ngồi xa cũng có thể đọc được", "Để không vi phạm bản quyền", "Để hình ảnh tự động chạy"], correct: 1, cols: 1 },
+        { lesson: "10a", lvl: "TH", q: "Nguyên tắc nào sau đây SAI khi chọn màu sắc cho bài trình chiếu?", options: ["Chọn màu phù hợp với chủ đề", "Dùng càng nhiều màu trên một trang càng đẹp", "Sử dụng các màu trung tính làm nền", "Tạo sự tương phản giữa chữ và nền"], correct: 1, cols: 1 },
+        { lesson: "10a", lvl: "TH", q: "Tác dụng của việc đánh số trang chiếu trong buổi thuyết trình là gì?", options: ["Giúp máy chiếu hoạt động nhanh hơn", "Giúp người thuyết trình và khán giả dễ dàng theo dõi vị trí nội dung", "Tự động dịch ngôn ngữ", "Thay thế cho hiệu ứng động"], correct: 1, cols: 1 },
+
+        // Bài 11a: Sử dụng bản mẫu cho bài trình chiếu (12 NB, 3 TH - Lấy 4 NB, 1 TH)
+        { lesson: "11a", lvl: "NB", q: "Bản mẫu (Template) trong PowerPoint là gì?", options: ["Là tệp âm thanh nền", "Là một tệp trình chiếu được thiết kế sẵn cấu trúc, định dạng và màu sắc", "Là công cụ vẽ biểu đồ", "Là một phần mềm diệt virus"], correct: 1, cols: 1 },
+        { lesson: "11a", lvl: "NB", q: "Khi khởi động PowerPoint, để tìm kiếm một bản mẫu có sẵn trực tuyến, ta nhập từ khóa vào ô nào?", options: ["Slide name", "Search for online templates and themes", "Find text", "Insert Link"], correct: 1, cols: 1 },
+        { lesson: "11a", lvl: "NB", q: "Lệnh Hyperlink (Siêu liên kết) nằm ở thẻ nào trên thanh Ribbon?", options: ["Home", "Design", "Insert", "Transitions"], correct: 2, cols: 2 },
+        { lesson: "11a", lvl: "NB", q: "Chức năng của Hyperlink trong PowerPoint dùng để làm gì?", options: ["Xóa trang chiếu", "Liên kết một đối tượng tới một trang web, tệp tin hoặc slide khác", "Chỉnh màu cho hình ảnh", "Đánh số thứ tự"], correct: 1, cols: 1 },
+        { lesson: "11a", lvl: "NB", q: "Để chèn một video vào trang chiếu, em chọn lệnh nào?", options: ["Insert > Audio", "Insert > Video", "Insert > Chart", "Insert > Picture"], correct: 1, cols: 2 },
+        { lesson: "11a", lvl: "NB", q: "Slide Master (Trang chiếu chủ) có chức năng gì?", options: ["Quản lý và điều khiển định dạng chung cho toàn bộ các trang chiếu", "Chỉnh sửa video trực tiếp", "Ngăn chặn người khác sao chép tệp", "Kết nối máy in"], correct: 0, cols: 1 },
+        { lesson: "11a", lvl: "NB", q: "Để mở chế độ Slide Master, ta vào thẻ lệnh nào?", options: ["Home", "View", "Review", "Slide Show"], correct: 1, cols: 2 },
+        { lesson: "11a", lvl: "NB", q: "Khi lưu một bài trình chiếu thành bản mẫu để dùng sau, ta chọn đuôi mở rộng là gì?", options: [".docx", ".xlsx", ".pptx", ".potx"], correct: 3, cols: 2 },
+        { lesson: "11a", lvl: "NB", q: "Trong mục Insert Video, tùy chọn 'This Device...' dùng để làm gì?", options: ["Chèn video từ mạng Internet", "Chèn video đã có sẵn trên máy tính của em", "Xóa video", "Tự động quay video mới"], correct: 1, cols: 1 },
+        { lesson: "11a", lvl: "NB", q: "Phím tắt để mở nhanh hộp thoại chèn Hyperlink là gì?", options: ["Ctrl + H", "Ctrl + K", "Ctrl + L", "Ctrl + P"], correct: 1, cols: 2 },
+        { lesson: "11a", lvl: "NB", q: "Bản mẫu (Template) và Mẫu định dạng (Theme) có giống nhau hoàn toàn không?", options: ["Hoàn toàn giống nhau", "Khác nhau (Template chứa cả bố cục chi tiết và nội dung gợi ý, Theme chỉ chứa màu/font)", "Theme dùng cho Word, Template dùng cho PowerPoint", "Cả hai đều không dùng được cho PowerPoint"], correct: 1, cols: 1 },
+        { lesson: "11a", lvl: "NB", q: "Cấu trúc của một bản mẫu thường bao gồm?", options: ["Chỉ một trang trắng", "Các trang chiếu với hình nền, phông chữ, và bố cục vị trí chữ/ảnh đã sắp xếp hợp lý", "Chỉ các đoạn video", "Các mã lập trình phức tạp"], correct: 1, cols: 1 },
+        
+        { lesson: "11a", lvl: "TH", q: "Lợi ích lớn nhất của việc sử dụng bản mẫu (Template) là gì?", options: ["Bảo mật tệp tuyệt đối", "Giúp tiết kiệm thời gian thiết kế, đảm bảo bài trình chiếu có bố cục chuyên nghiệp", "Phần mềm sẽ tự động thuyết trình thay con người", "Làm dung lượng tệp nhỏ đi 10 lần"], correct: 1, cols: 1 },
+        { lesson: "11a", lvl: "TH", q: "Khi ta thay đổi phông chữ tiêu đề trong Slide Master, điều gì sẽ xảy ra?", options: ["Chỉ trang tiêu đề thay đổi", "Toàn bộ các trang chiếu sử dụng layout đó sẽ tự động đổi phông chữ theo", "Chữ sẽ bị xóa mất", "Không có thay đổi nào"], correct: 1, cols: 1 },
+        { lesson: "11a", lvl: "TH", q: "Tại sao nên dùng Hyperlink (Siêu liên kết) trong khi thuyết trình?", options: ["Để mở nhanh một trang web hoặc tài liệu minh họa khác mà không cần thoát khỏi màn hình trình chiếu", "Để máy chiếu không bị tắt đột ngột", "Để đổi màu nền trang chiếu tự động", "Để tính toán các số liệu trong bảng"], correct: 0, cols: 1 }
+    ];
+
+    // --- NGÂN HÀNG ĐÚNG/SAI (12 Câu lớn) ---
+    // Yêu cầu bốc: 1 câu Bài 9a, 1 câu Bài 10a, 2 câu Bài 11a
+    const allTfBank = [
+        // BÀI 9a: ĐẦU TRANG, CHÂN TRANG (3 Câu)
+        { lesson: "9a", title: "Khái niệm và ứng dụng của đầu trang, chân trang:", items: [
+            { text: "a) Đầu trang (Header) luôn hiển thị ở mép dưới cùng của trang văn bản.", ans: "S" },
+            { text: "b) Có thể gõ họ tên tác giả vào phần chân trang (Footer).", ans: "D" },
+            { text: "c) Đánh số trang giúp người đọc dễ dàng tìm kiếm nội dung trong tài liệu dài.", ans: "D" },
+            { text: "d) Khi xóa phần Footer ở trang số 2, các trang khác vẫn giữ nguyên nội dung Footer.", ans: "S" }
+        ]},
+        { lesson: "9a", title: "Thao tác đánh số trang và Header/Footer:", items: [
+            { text: "a) Để thêm số trang, ta vào dải lệnh Design và chọn Page Number.", ans: "S" },
+            { text: "b) Ta có thể thiết lập để trang đầu tiên (trang bìa) không hiển thị số trang.", ans: "D" },
+            { text: "c) Có thể chèn một hình ảnh nhỏ (như logo trường) vào khu vực Header.", ans: "D" },
+            { text: "d) Số trang trong Word chỉ có thể nằm ở chính giữa chân trang, không thể căn lề trái/phải.", ans: "S" }
+        ]},
+        { lesson: "9a", title: "Hiệu quả trình bày văn bản:", items: [
+            { text: "a) Thông tin trong Header/Footer thường mờ hơn nội dung chính khi đang ở chế độ soạn thảo văn bản.", ans: "D" },
+            { text: "b) Đánh số trang là bắt buộc đối với văn bản chỉ có 1 trang duy nhất.", ans: "S" },
+            { text: "c) Header và Footer giúp văn bản hành chính trông chuyên nghiệp và nhất quán hơn.", ans: "D" },
+            { text: "d) Lệnh 'Top of page' trong công cụ Page Number dùng để đánh số ở dưới cùng của trang.", ans: "S" }
+        ]},
+
+        // BÀI 10a: ĐỊNH DẠNG NÂNG CAO TRANG CHIẾU (3 Câu)
+        { lesson: "10a", title: "Nguyên tắc phối màu trên trang chiếu:", items: [
+            { text: "a) Nhóm màu nóng (đỏ, cam) thường tạo cảm giác rực rỡ, chú ý.", ans: "D" },
+            { text: "b) Nên sử dụng 10 màu sắc khác nhau trên cùng một trang chiếu để tăng tính thẩm mỹ.", ans: "S" },
+            { text: "c) Để văn bản dễ đọc, màu chữ và màu nền cần có độ tương phản cao (VD: chữ sẫm trên nền sáng).", ans: "D" },
+            { text: "d) Nhóm màu trung tính (trắng, đen, xám) rất khó kết hợp với các màu khác.", ans: "S" }
+        ]},
+        { lesson: "10a", title: "Định dạng phông chữ và cỡ chữ:", items: [
+            { text: "a) Trong bài trình chiếu, chữ nội dung nên để kích thước từ 24pt trở lên để dễ nhìn.", ans: "D" },
+            { text: "b) Nên dùng từ 4 đến 5 phông chữ khác nhau trên cùng một slide để tránh nhàm chán.", ans: "S" },
+            { text: "c) Phông chữ không chân (như Arial, Calibri) thường dễ đọc hơn trên màn hình máy chiếu.", ans: "D" },
+            { text: "d) Tiêu đề trang nên có cỡ chữ nhỏ hơn phần nội dung chi tiết.", ans: "S" }
+        ]},
+        { lesson: "10a", title: "Chèn số trang vào PowerPoint:", items: [
+            { text: "a) Trong hộp thoại Header and Footer, mục 'Slide number' cho phép hiển thị số trang chiếu.", ans: "D" },
+            { text: "b) Tùy chọn 'Don't show on title slide' dùng để ẩn số trang trên trang bìa.", ans: "D" },
+            { text: "c) Lệnh 'Apply to All' chỉ áp dụng việc đánh số trang cho trang đầu tiên.", ans: "S" },
+            { text: "d) Không thể thêm ngày tháng tự động cập nhật vào chân trang chiếu.", ans: "S" }
+        ]},
+
+        // BÀI 11a: SỬ DỤNG BẢN MẪU (6 Câu)
+        { lesson: "11a", title: "Khái niệm và ứng dụng của Bản mẫu (Template):", items: [
+            { text: "a) Template cung cấp sẵn cấu trúc, bố cục màu sắc, phông chữ hợp lý.", ans: "D" },
+            { text: "b) Sử dụng bản mẫu làm mất đi tính chuyên nghiệp của bài thuyết trình.", ans: "S" },
+            { text: "c) Em có thể tải các bản mẫu miễn phí từ thư viện trực tuyến của PowerPoint.", ans: "D" },
+            { text: "d) Sau khi chọn bản mẫu, ta không thể thay đổi nội dung chữ trên đó.", ans: "S" }
+        ]},
+        { lesson: "11a", title: "Môi trường Slide Master (Trang chiếu chủ):", items: [
+            { text: "a) Slide Master dùng để chỉnh sửa định dạng chung cho toàn bộ bài thuyết trình cùng một lúc.", ans: "D" },
+            { text: "b) Để mở Slide Master, ta vào dải lệnh Animations.", ans: "S" },
+            { text: "c) Nếu ta chèn một logo vào Slide Master, logo đó sẽ tự động xuất hiện trên tất cả các slide.", ans: "D" },
+            { text: "d) Bất cứ thay đổi nào trong Slide Master đều không ảnh hưởng đến các slide nội dung.", ans: "S" }
+        ]},
+        { lesson: "11a", title: "Thao tác với Siêu liên kết (Hyperlink):", items: [
+            { text: "a) Hyperlink có thể liên kết một từ khóa đến một trang web trên mạng Internet.", ans: "D" },
+            { text: "b) Phím tắt để tạo Hyperlink là Ctrl + K.", ans: "D" },
+            { text: "c) Không thể dùng Hyperlink để liên kết tới một slide khác trong cùng tệp trình chiếu.", ans: "S" },
+            { text: "d) Chỉ có văn bản mới tạo được Hyperlink, hình ảnh thì không tạo được.", ans: "S" }
+        ]},
+        { lesson: "11a", title: "Chèn Video vào trang chiếu:", items: [
+            { text: "a) Lệnh Insert > Video > This Device... cho phép chèn video từ máy tính.", ans: "D" },
+            { text: "b) Khi chèn video, dung lượng của tệp trình chiếu thường sẽ nặng hơn.", ans: "D" },
+            { text: "c) Video chèn vào PowerPoint không thể điều chỉnh được âm lượng.", ans: "S" },
+            { text: "d) Có thể thiết lập cho video tự động phát (Automatically) ngay khi mở slide.", ans: "D" }
+        ]},
+        { lesson: "11a", title: "Tùy biến bài trình chiếu với Bản mẫu:", items: [
+            { text: "a) Khi áp dụng Template mới, bố cục các hình ảnh cũ có thể tự động thay đổi theo mẫu.", ans: "D" },
+            { text: "b) Không thể lưu bài trình chiếu của mình thành một Template (.potx) mới.", ans: "S" },
+            { text: "c) Sử dụng Template giúp học sinh tiết kiệm thời gian thiết kế giao diện.", ans: "D" },
+            { text: "d) Các Template trực tuyến yêu cầu máy tính phải có kết nối Internet để tải về.", ans: "D" }
+        ]},
+        { lesson: "11a", title: "Tích hợp đa phương tiện và liên kết:", items: [
+            { text: "a) Hyperlink giúp bài thuyết trình linh hoạt hơn khi cần tham chiếu tài liệu bên ngoài.", ans: "D" },
+            { text: "b) Chữ có chứa Hyperlink thường được gạch chân và đổi sang màu xanh lam mặc định.", ans: "D" },
+            { text: "c) Lệnh Online Video dùng để chèn video từ máy tính cá nhân.", ans: "S" },
+            { text: "d) Video trên slide có thể được cắt ngắn (Trim Video) bằng các công cụ tích hợp trong PowerPoint.", ans: "D" }
+        ]}
+    ];
+
+    // --- NGÂN HÀNG TỰ LUẬN (9 CÂU VẬN DỤNG/THÔNG HIỂU) ---
+    // Yêu cầu bốc: Bài 10a (1 TH, 1 VD), Bài 11a (1 VD)
+    const allEssayBank = [
+        // BÀI 10a (Thông hiểu) - 3 câu
+        { lesson: "10a_TH", text: "Tại sao trong thiết kế bài trình chiếu, việc sử dụng các cặp màu có độ tương phản cao (như chữ đen trên nền trắng, chữ vàng trên nền xanh đậm) lại vô cùng quan trọng? Nêu một ví dụ về cách phối màu không hợp lý gây khó đọc. (1.0 điểm)" },
+        { lesson: "10a_TH", text: "Việc đánh số trang và thêm thông tin ở phần đầu trang/chân trang (Header/Footer) trong PowerPoint mang lại lợi ích gì cho cả người thuyết trình và người theo dõi? (1.0 điểm)" },
+        { lesson: "10a_TH", text: "Màu sắc được chia làm ba nhóm cơ bản: màu nóng, màu lạnh và màu trung tính. Theo em, để bài trình chiếu không bị chói mắt và chuyên nghiệp, chúng ta nên kết hợp các nhóm màu này như thế nào? (1.0 điểm)" },
+        
+        // BÀI 10a (Vận dụng) - 3 câu
+        { lesson: "10a_VD", text: "Em được giao trình bày báo cáo về 'An toàn giao thông'. Hãy nêu các bước thực hiện để chèn dòng chữ 'Tổ 1 - Lớp 8A' vào phần chân trang (Footer) của tất cả các trang chiếu, ngoại trừ trang Tiêu đề đầu tiên? (1.0 điểm)" },
+        { lesson: "10a_VD", text: "Nêu các bước thao tác trên phần mềm PowerPoint để đánh số trang tự động cho toàn bộ bài thuyết trình? Nút lệnh này nằm ở dải lệnh nào? (1.0 điểm)" },
+        { lesson: "10a_VD", text: "Trên trang chiếu của em, dòng chữ tiêu đề đang bị chìm vào hình nền phía sau. Em hãy đề xuất 2 thao tác định dạng (về cỡ chữ, màu sắc hoặc kiểu chữ) để tiêu đề này nổi bật và dễ đọc hơn? (1.0 điểm)" },
+
+        // BÀI 11a (Vận dụng) - 3 câu
+        { lesson: "11a_VD", text: "Em muốn sử dụng một bản mẫu (Template) chủ đề Giáo dục có sẵn trong thư viện trực tuyến của PowerPoint. Em hãy nêu các bước thực hiện để tìm kiếm, tải và áp dụng bản mẫu này cho bài làm của mình? (1.0 điểm)" },
+        { lesson: "11a_VD", text: "Trong bài thuyết trình về 'Lịch sử tự nhiên', em muốn chèn một đoạn video minh họa loài khủng long (tệp video đã lưu sẵn trên máy tính). Hãy mô tả các bước để chèn video này vào trang chiếu? (1.0 điểm)" },
+        { lesson: "11a_VD", text: "Để minh họa cho từ khóa 'Sách giáo khoa điện tử', em muốn tạo một Siêu liên kết (Hyperlink) từ chữ đó mở ra trang web Hành trang số. Hãy nêu các bước tạo Hyperlink cho đoạn chữ này? (1.0 điểm)" }
+    ];
+
+    // ==========================================
+    // 2. THUẬT TOÁN XÁO TRỘN & BỐC ĐỀ CHUẨN MA TRẬN TIN 8
+    // ==========================================
+    function shuffleArray(array) {
+        let curId = array.length;
+        while (0 !== curId) {
+            let randId = Math.floor(Math.random() * curId);
+            curId -= 1;
+            let tmp = array[curId]; array[curId] = array[randId]; array[randId] = tmp;
+        }
+        return array;
+    }
+
+    let selectedMcq = [], selectedTf = [], selectedEssay = [];
+
+    function generateRandomExam() {
+        // 1. RÚT TRẮC NGHIỆM (MCQ) - 12 CÂU
+        let mcq9a_NB = shuffleArray(allMcqBank.filter(q => q.lesson === "9a" && q.lvl === "NB")).slice(0, 2);
+        let mcq10a_NB = shuffleArray(allMcqBank.filter(q => q.lesson === "10a" && q.lvl === "NB")).slice(0, 4);
+        let mcq10a_TH = shuffleArray(allMcqBank.filter(q => q.lesson === "10a" && q.lvl === "TH")).slice(0, 1);
+        let mcq11a_NB = shuffleArray(allMcqBank.filter(q => q.lesson === "11a" && q.lvl === "NB")).slice(0, 4);
+        let mcq11a_TH = shuffleArray(allMcqBank.filter(q => q.lesson === "11a" && q.lvl === "TH")).slice(0, 1);
+        
+        selectedMcq = shuffleArray([...mcq9a_NB, ...mcq10a_NB, ...mcq10a_TH, ...mcq11a_NB, ...mcq11a_TH]);
+
+        selectedMcq.forEach(q => {
+            let optsWithStatus = q.options.map((text, idx) => ({ text: text, isCorrect: (idx === q.correct) }));
+            optsWithStatus = shuffleArray(optsWithStatus);
+            q.options = optsWithStatus.map(o => o.text);
+            q.correct = optsWithStatus.findIndex(o => o.isCorrect); 
+        });
+
+        // 2. RÚT ĐÚNG/SAI (T/F) - 4 CÂU
+        let tf9a = shuffleArray(allTfBank.filter(q => q.lesson === "9a"))[0];
+        let tf10a = shuffleArray(allTfBank.filter(q => q.lesson === "10a"))[0];
+        let tf11a_1 = shuffleArray(allTfBank.filter(q => q.lesson === "11a"))[0]; 
+        let tf11a_2 = shuffleArray(allTfBank.filter(q => q.lesson === "11a"))[1]; 
+        
+        selectedTf = shuffleArray([tf9a, tf10a, tf11a_1, tf11a_2]);
+
+        // 3. RÚT TỰ LUẬN (ESSAY) - 3 CÂU
+        let es10a_TH = shuffleArray(allEssayBank.filter(q => q.lesson === "10a_TH"))[0];
+        let es10a_VD = shuffleArray(allEssayBank.filter(q => q.lesson === "10a_VD"))[0];
+        let es11a_VD = shuffleArray(allEssayBank.filter(q => q.lesson === "11a_VD"))[0];
+        
+        selectedEssay = [es10a_TH.text, es10a_VD.text, es11a_VD.text]; 
+    }
+
+    // ==========================================
+    // 3. GIAO DIỆN & HOẠT ĐỘNG CHUNG
+    // ==========================================
+    let timeStart = new Date();
+    let duration = 45 * 60; 
+    let timerInterval;
+
+    function encodeUTF8(str) { return btoa(unescape(encodeURIComponent(str || ""))); }
+
+    function showToast(message, type = 'success') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        let icon = '<i class="fa-solid fa-circle-check"></i>';
+        if (type === 'error') icon = '<i class="fa-solid fa-circle-exclamation"></i>';
+        if (type === 'warning') icon = '<i class="fa-solid fa-triangle-exclamation"></i>';
+        toast.innerHTML = `${icon} <span>${message}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => { toast.remove(); }, 3000);
+    }
+
+    window.onload = function() {
+        const studentName = sessionStorage.getItem('exam_name') || "Thí sinh tự do";
+        const studentSchool = sessionStorage.getItem('exam_school') || "Chưa cập nhật";
+        const studentClass = sessionStorage.getItem('exam_class') || "---";
+
+        document.getElementById('display-name').innerText = studentName;
+        document.getElementById('display-school').innerText = studentSchool.toUpperCase();
+        document.getElementById('display-class').innerText = studentClass;
+
+        generateRandomExam(); 
+        renderExam();
+        renderPalette(); 
+        startTimer();
+    };
+
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            duration--;
+            let m = Math.floor(duration / 60);
+            let s = duration % 60;
+            document.getElementById('timer').innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            if (duration <= 0) {
+                clearInterval(timerInterval);
+                closeSubmitModal();
+                showToast("Đã hết thời gian làm bài! Hệ thống đang tự động nộp bài...", "warning");
+                executeSubmit();
+            }
+        }, 1000);
+    }
+
+    function renderExam() {
+        const container = document.getElementById('quiz-container');
+        let html = "";
+        let globalQIndex = 1; 
+
+        // MCQ
+        html += `<div class="section-title">I. PHẦN TRẮC NGHIỆM NHIỀU LỰA CHỌN (3.0 ĐIỂM)</div>`;
+        selectedMcq.forEach((q, index) => {
+            let gridClass = q.cols === 2 ? "grid-2" : "grid-1";
+            html += `
+            <div class="question-card" id="q-${globalQIndex}">
+                <div class="question-text"><span>Câu ${globalQIndex}:</span> ${q.q}</div>
+                <div class="mcq-options ${gridClass}">`;
+            q.options.forEach((opt, optIndex) => {
+                let letter = ["A", "B", "C", "D"][optIndex];
+                html += `
+                    <label class="mcq-option">
+                        <input type="radio" name="mcq_${index}" value="${optIndex}" onchange="markAnswered(${globalQIndex})">
+                        <b>${letter}.</b> &nbsp;${opt}
+                    </label>`;
+            });
+            html += `</div></div>`;
+            globalQIndex++;
+        });
+
+        // T/F
+        html += `<div class="section-title" style="margin-top: 30px;">II. PHẦN TRẮC NGHIỆM ĐÚNG/SAI (4.0 ĐIỂM)</div>`;
+        selectedTf.forEach((q, qIndex) => {
+            html += `
+            <div class="question-card" id="q-${globalQIndex}">
+                <div class="question-text"><span>Câu ${globalQIndex}:</span> ${q.title}</div>
+                <table class="tf-table">
+                    <tr>
+                        <th class="tf-text">Nội dung ý</th>
+                        <th style="width: 60px;">ĐÚNG</th>
+                        <th style="width: 60px;">SAI</th>
+                    </tr>`;
+            q.items.forEach((item, iIndex) => {
+                html += `
+                    <tr>
+                        <td class="tf-text">${item.text}</td>
+                        <td><input type="radio" name="tf_${qIndex}_${iIndex}" value="D" class="tf-radio" onchange="markAnswered(${globalQIndex})"></td>
+                        <td><input type="radio" name="tf_${qIndex}_${iIndex}" value="S" class="tf-radio" onchange="markAnswered(${globalQIndex})"></td>
+                    </tr>`;
+            });
+            html += `</table></div>`;
+            globalQIndex++;
+        });
+
+        // ESSAY
+        html += `<div class="section-title" style="margin-top: 30px;">III. PHẦN TỰ LUẬN (3.0 ĐIỂM)</div>`;
+        selectedEssay.forEach((qText, index) => {
+            html += `
+            <div class="question-card" id="q-${globalQIndex}">
+                <div class="question-text"><span>Câu ${globalQIndex}:</span><br>${qText}</div>
+                <div class="rte-container">
+                    <div class="rte-toolbar">
+                        <button class="rte-btn" type="button" title="In đậm" onclick="execCmd('bold', '${index}')"><i class="fa-solid fa-bold"></i></button>
+                        <button class="rte-btn" type="button" title="In nghiêng" onclick="execCmd('italic', '${index}')"><i class="fa-solid fa-italic"></i></button>
+                        <button class="rte-btn" type="button" title="Gạch chân" onclick="execCmd('underline', '${index}')"><i class="fa-solid fa-underline"></i></button>
+                        <div class="rte-btn" title="Màu chữ">
+                            <i class="fa-solid fa-palette"></i>
+                            <input type="color" onchange="execCmd('foreColor', '${index}', this.value)">
+                        </div>
+                        <div class="rte-btn" title="Cỡ chữ">
+                            <i class="fa-solid fa-text-height"></i>
+                            <select onchange="execCmd('fontSize', '${index}', this.value)">
+                                <option value="3">Vừa</option>
+                                <option value="5">Lớn</option>
+                                <option value="7">Rất lớn</option>
+                            </select>
+                        </div>
+                        <label class="rte-btn" title="Chụp ảnh / Chọn ảnh từ máy">
+                            <i class="fa-solid fa-camera"></i> Đính kèm ảnh
+                            <input type="file" accept="image/*" capture="environment" onchange="insertImage(this, '${index}', ${globalQIndex})">
+                        </label>
+                    </div>
+                    <div class="essay-box" id="essay_${index}" contenteditable="true" placeholder="Nhập câu trả lời của em vào đây..." oninput="markAnswered(${globalQIndex}, this.innerHTML)"></div>
+                </div>
+            </div>`;
+            globalQIndex++;
+        });
+
+        container.innerHTML = html;
+    }
+
+    function renderPalette() {
+        const paletteContainer = document.getElementById('palette-container');
+        let html = "";
+        let totalQuestions = selectedMcq.length + selectedTf.length + selectedEssay.length;
+        for (let i = 1; i <= totalQuestions; i++) {
+            html += `<button class="palette-btn" id="pal-${i}" onclick="scrollToQ(${i})">${i}</button>`;
+        }
+        paletteContainer.innerHTML = html;
+    }
+
+    function scrollToQ(qId) { document.getElementById(`q-${qId}`).scrollIntoView({ behavior: "smooth", block: "center" }); }
+
+    function markAnswered(qId, textValue = true) {
+        const btn = document.getElementById(`pal-${qId}`);
+        if (typeof textValue === 'string') {
+            let tempDiv = document.createElement('div'); tempDiv.innerHTML = textValue;
+            if (tempDiv.textContent.trim() !== "" || textValue.includes("<img")) btn.classList.add("answered");
+            else btn.classList.remove("answered");
+        } else btn.classList.add("answered");
+    }
+
+    function execCmd(command, essayIndex, value = null) {
+        document.getElementById(`essay_${essayIndex}`).focus(); document.execCommand(command, false, value);
+    }
+
+    function insertImage(input, essayIndex, globalQIndex) {
+        const file = input.files[0]; if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                let width = img.width; let height = img.height;
+                if (width > 800) { height = Math.round(height * (800 / width)); width = 800; }
+                canvas.width = width; canvas.height = height;
+                const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.6); 
+                document.getElementById(`essay_${essayIndex}`).focus();
+                document.execCommand('insertImage', false, dataUrl);
+                markAnswered(globalQIndex, "image_added");
+            }
+            img.src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+    }
+
+    function openSubmitModal() {
+        const unanswered = document.querySelectorAll('.palette-btn:not(.answered)').length;
+        const msgEl = document.getElementById('submit-msg');
+        if (unanswered > 0) {
+            msgEl.innerHTML = `Bạn còn <b style="color:var(--danger);">${unanswered} câu chưa làm</b>.<br>Bạn có chắc chắn muốn nộp bài thi?`;
+        } else {
+            msgEl.innerText = "Bạn đã hoàn thành tất cả câu hỏi. Xác nhận nộp bài thi?";
+        }
+        document.getElementById('submitModal').style.display = 'flex';
+    }
+
+    function closeSubmitModal() { document.getElementById('submitModal').style.display = 'none'; }
+
+    function executeSubmit() {
+        closeSubmitModal();
+        clearInterval(timerInterval);
+        
+        const btn = document.getElementById('btn-submit');
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang nộp bài...';
+        btn.disabled = true;
+
+        let scoreMCQ = 0; 
+        let scoreTF = 0; 
+        let answersCodeArray = []; 
+
+        // 1. Chấm điểm MCQ
+        let mcqAnsStr = "";
+        selectedMcq.forEach((q, index) => {
+            const selected = document.querySelector(`input[name="mcq_${index}"]:checked`);
+            let userAns = selected ? parseInt(selected.value) : -1;
+            let letterAns = userAns > -1 ? ["A", "B", "C", "D"][userAns] : "X";
+            if (userAns === q.correct) scoreMCQ += 0.25;
+            mcqAnsStr += `C${index + 1}${letterAns}-`;
+        });
+        answersCodeArray.push(mcqAnsStr.slice(0, -1));
+
+        // 2. Chấm điểm T/F
+        let tfAnsStr = "";
+        selectedTf.forEach((q, qIndex) => {
+            q.items.forEach((item, iIndex) => {
+                const selected = document.querySelector(`input[name="tf_${qIndex}_${iIndex}"]:checked`);
+                const userAns = selected ? selected.value : "X";
+                const qNum = qIndex + 13; 
+                const letter = ["a", "b", "c", "d"][iIndex];
+                if (userAns === item.ans) scoreTF += 0.25;
+                tfAnsStr += `C${qNum}${letter}${userAns}-`;
+            });
+        });
+        answersCodeArray.push(tfAnsStr.slice(0, -1));
+
+        // 3. Gom Tự luận
+        let essayEncodedStr = "";   
+        let essayPlainForSheet = ""; 
+        
+        selectedEssay.forEach((qText, index) => {
+            let htmlAns = document.getElementById(`essay_${index}`).innerHTML.trim();
+            let tempDiv = document.createElement('div');
+            tempDiv.innerHTML = htmlAns;
+            let plainText = tempDiv.textContent.trim();
+
+            if(plainText === "" && !htmlAns.includes("<img")) {
+                htmlAns = "";
+                plainText = "(Không trả lời)";
+            }
+
+            essayPlainForSheet += `Câu ${index + 17}:\n${plainText}\n\n`;
+            let base64Ans = htmlAns ? encodeUTF8(htmlAns) : "X";
+            essayEncodedStr += `C${index + 17}:${base64Ans}-`; 
+        });
+
+        let totalScore = scoreMCQ + scoreTF; 
+        const timeEnd = new Date();
+        const timeTaken = Math.floor((timeEnd - timeStart) / 1000);
+        let timeTakenStr = `${Math.floor(timeTaken / 60)} phút ${timeTaken % 60} giây`;
+        let deviceInfo = /Mobi|Android/i.test(navigator.userAgent) ? "Điện thoại/Tablet" : "Máy tính";
+
+        // 4. Payload gửi lên máy chủ
+        const payload = {
+            action: "submitExam",
+            timeStart: timeStart.toLocaleTimeString('vi-VN'),
+            timeEnd: timeEnd.toLocaleTimeString('vi-VN'),
+            timeTaken: timeTakenStr,
+            name: sessionStorage.getItem('exam_name') || "Không tên",
+            className: sessionStorage.getItem('exam_class') || "0",
+            school: sessionStorage.getItem('exam_school') || "Không xác định",
+            deviceInfo: deviceInfo,
+            location: "Chờ cấp quyền",
+            scoreTNLQ: scoreMCQ.toFixed(2),
+            scoreTF: scoreTF.toFixed(2),
+            scoreShort: 0,
+            essay: essayPlainForSheet.trim(),       
+            correct: "---",
+            totalScore: totalScore.toFixed(2),
+            detailCode: answersCodeArray.join('*'), 
+            encodedEssay: essayEncodedStr.slice(0, -1) 
+        };
+
+        // Fetch
+        fetch(CONFIG.GOOGLE_SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(payload)
+        }).then(() => {
+            sessionStorage.setItem('report_time', timeTakenStr);
+            sessionStorage.setItem('report_score_tn', totalScore.toFixed(2));
+            sessionStorage.setItem('report_subject', 'Tin học 8'); // Đã cập nhật thành môn Tin 8
+            
+            let mcqReportQ = "<tr>", mcqReportA = "<tr>", mcqReportQ2 = "<tr>", mcqReportA2 = "<tr>"; 
+            selectedMcq.forEach((q, i) => {
+                const selected = document.querySelector(`input[name="mcq_${i}"]:checked`);
+                let userAns = selected ? ["A","B","C","D"][parseInt(selected.value)] : "";
+                if (i < 10) { mcqReportQ += `<th>C.${i+1}</th>`; mcqReportA += `<td>${userAns}</td>`; }
+                else { mcqReportQ2 += `<th>C.${i+1}</th>`; mcqReportA2 += `<td>${userAns}</td>`; }
+            });
+            sessionStorage.setItem('report_mcq', mcqReportQ + "</tr>" + mcqReportA + "</tr>" + mcqReportQ2 + "</tr>" + mcqReportA2 + "</tr>");
+
+            let tfReportHtml = "<tr><th>Câu</th><th>Ý a</th><th>Ý b</th><th>Ý c</th><th>Ý d</th></tr>";
+            selectedTf.forEach((q, qIndex) => {
+                let row = `<tr><td><b>Câu ${qIndex + 13}</b></td>`;
+                q.items.forEach((item, iIndex) => {
+                    const selected = document.querySelector(`input[name="tf_${qIndex}_${iIndex}"]:checked`);
+                    let userAns = selected ? selected.value : "";
+                    row += `<td>${userAns === 'D' ? 'Đ' : (userAns === 'S' ? 'S' : '')}</td>`;
+                });
+                tfReportHtml += row + "</tr>";
+            });
+            sessionStorage.setItem('report_tf', tfReportHtml);
+
+            let essayReportHtml = "";
+            selectedEssay.forEach((qText, i) => {
+                let htmlAns = document.getElementById(`essay_${i}`).innerHTML.trim();
+                let tempDiv = document.createElement('div'); tempDiv.innerHTML = htmlAns;
+                if(tempDiv.textContent.trim() === "" && !htmlAns.includes("<img")) htmlAns = "<i>(Bỏ trống)</i>";
+                essayReportHtml += `
+                <div class="essay-item" style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #ccc;">
+                    <b style="color: #2563eb;">Câu ${i + 17}:</b><br>
+                    <div style="margin-top: 5px;"><b>Trả lời:</b><br>${htmlAns}</div>
+                </div>`;
+            });
+            sessionStorage.setItem('report_essay', essayReportHtml);
+
+            window.location.href = "Report_hs.html";
+        }).catch(err => {
+            console.error(err);
+            showToast("Lỗi mạng! Vui lòng thử bấm nộp bài lại.", "error");
+            btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> GỬI LẠI';
+            btn.disabled = false;
+        });
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Ôn Tập - Tin Học Thái Sơn</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="config.js"></script>
+
+    <style>
+        :root { 
+            --primary: #2563eb; 
+            --bg-body: #f1f5f9; 
+            --text-main: #1e293b;
+            --border: #e2e8f0;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: var(--bg-body); 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            min-height: 100vh; margin: 0; padding: 20px;
+        }
+
+        .card { 
+            background: white; padding: 35px 30px; border-radius: 15px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; 
+        }
+
+        .logo { font-size: 50px; font-weight: 900; text-align: center; color: #0020dd; margin-bottom: 10px; }
+        .logo span { color: #7000a0; }
+        
+        h2 { text-align: center; font-size: 18px; text-transform: uppercase; margin-bottom: 25px; color: var(--text-main); }
+
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 6px; color: #64748b; }
+
+        .input-box { 
+            display: flex; align-items: center; border: 1px solid var(--border); 
+            border-radius: 8px; background: #f8fafc; overflow: hidden; transition: 0.2s;
+        }
+        .input-box:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .input-box i { padding: 0 12px; color: #94a3b8; }
+        .input-box select, .input-box input { 
+            flex: 1; border: none; padding: 12px; outline: none; background: transparent; font-size: 14px; 
+            color: var(--text-main); width: 100%;
+        }
+        .input-box select:disabled { color: #94a3b8; cursor: not-allowed; }
+
+        .btn { 
+            width: 100%; padding: 14px; border: none; border-radius: 8px; 
+            background: var(--primary); color: white; font-weight: bold; font-size: 15px;
+            cursor: pointer; margin-top: 20px; transition: 0.3s; 
+            display: flex; justify-content: center; align-items: center; gap: 8px;
+        }
+        .btn:hover { background: #1d4ed8; transform: translateY(-2px); }
+        .btn:disabled { background: #cbd5e1; cursor: not-allowed; }
+
+        #loading { text-align: center; color: var(--primary); font-weight: bold; margin-bottom: 15px; font-size: 14px;}
+        .hidden { display: none; }
+
+        /* NÚT CHUYỂN TRANG ADMIN */
+        .admin-link { margin-top: 25px; color: #64748b; font-size: 13px; cursor: pointer; transition: 0.2s; font-weight: 600;}
+        .admin-link:hover { color: var(--primary); }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="logo">T<span>S</span></div>
+        <h2 id="school-title">Hệ Thống Ôn Tập Trực Tuyến</h2>
+
+        <div id="loading"><i class="fas fa-sync fa-spin"></i> Đang kết nối dữ liệu...</div>
+
+        <div id="login-form" class="hidden">
+            <div class="form-group">
+                <label>CHỌN KHỐI</label>
+                <div class="input-box">
+                    <i class="fas fa-layer-group"></i>
+                    <select id="slcGrade" onchange="loadClasses()">
+                        <option value="">-- Chọn Khối --</option>
+                        <option value="6">Khối 6</option>
+                        <option value="7">Khối 7</option>
+                        <option value="8">Khối 8</option>
+                        <option value="9">Khối 9</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>CHỌN LỚP</label>
+                <div class="input-box">
+                    <i class="fas fa-users"></i>
+                    <select id="slcClass" disabled onchange="loadStudents()">
+                        <option value="">-- Chọn Lớp --</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>HỌ VÀ TÊN</label>
+                <div class="input-box">
+                    <i class="fas fa-user"></i>
+                    <select id="slcName" disabled onchange="checkSelection()">
+                        <option value="">-- Chọn Học Sinh --</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="passArea" class="form-group hidden">
+                <label>MẬT KHẨU</label>
+                <div class="input-box">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="txtPass" placeholder="Nhập mật khẩu..." onkeypress="if(event.key === 'Enter') startExam()">
+                </div>
+            </div>
+
+            <button id="btnSubmit" class="btn" onclick="startExam()">
+                ĐĂNG NHẬP <i class="fa-solid fa-arrow-right-to-bracket"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="admin-link" onclick="window.location.href='admin.html'">
+        <i class="fa-solid fa-shield-halved"></i> Đăng nhập Quản trị viên
+    </div>
+
+    <script>
+        let dataHocSinh = [];
+
+        // 1. Tải dữ liệu từ Google Sheets khi mở trang
+        window.onload = async () => {
+            try {
+                // Kiểm tra xem file config.js có tồn tại không
+                if (typeof CONFIG === 'undefined') {
+                    document.getElementById('loading').innerHTML = "<i class='fa-solid fa-triangle-exclamation' style='color:red;'></i> Lỗi: Không tìm thấy file config.js!";
+                    return;
+                }
+
+                // Kiểm tra đã cấu hình Link Google Script chưa
+                if (!CONFIG.GOOGLE_SCRIPT_URL || CONFIG.GOOGLE_SCRIPT_URL === "") {
+                    document.getElementById('loading').innerHTML = "<i class='fa-solid fa-triangle-exclamation' style='color:red;'></i> Lỗi: Chưa cấu hình GOOGLE_SCRIPT_URL!";
+                    return;
+                }
+
+                // Cập nhật tên trường từ CONFIG lên tiêu đề (nếu có khai báo)
+                if (CONFIG.SCHOOL_NAME) {
+                    document.getElementById('school-title').innerText = CONFIG.SCHOOL_NAME.toUpperCase();
+                }
+
+                const res = await fetch(CONFIG.GOOGLE_SCRIPT_URL + "?action=getUsers");
+                const json = await res.json();
+                
+                if(json.status === "success") {
+                    dataHocSinh = json.data; 
+                    document.getElementById('loading').classList.add('hidden');
+                    document.getElementById('login-form').classList.remove('hidden');
+                } else {
+                    document.getElementById('loading').innerHTML = "<i class='fa-solid fa-circle-xmark' style='color:red;'></i> " + json.message;
+                }
+            } catch (e) {
+                document.getElementById('loading').innerHTML = "<i class='fa-solid fa-wifi' style='color:red;'></i> Lỗi kết nối mạng hoặc máy chủ!";
+            }
+        };
+
+        // 2. Lọc Lớp dựa trên Khối
+        function loadClasses() {
+            const grade = document.getElementById('slcGrade').value;
+            const slcClass = document.getElementById('slcClass');
+            const slcName = document.getElementById('slcName');
+            
+            slcClass.innerHTML = '<option value="">-- Chọn Lớp --</option>';
+            slcName.innerHTML = '<option value="">-- Chọn Học Sinh --</option>';
+            slcClass.disabled = true;
+            slcName.disabled = true;
+            document.getElementById('passArea').classList.add('hidden');
+            document.getElementById('txtPass').value = '';
+
+            if(!grade) return;
+
+            const classes = [...new Set(dataHocSinh
+                .filter(row => String(row[2]).trim() === grade)
+                .map(row => String(row[3]).trim())
+            )].sort();
+
+            classes.forEach(c => {
+                slcClass.innerHTML += `<option value="${c}">${c}</option>`;
+            });
+            slcClass.disabled = false;
+        }
+
+        // 3. Lọc Tên dựa trên Lớp
+        function loadStudents() {
+            const className = document.getElementById('slcClass').value;
+            const slcName = document.getElementById('slcName');
+            
+            slcName.innerHTML = '<option value="">-- Chọn Học Sinh --</option>';
+            document.getElementById('passArea').classList.add('hidden');
+            document.getElementById('txtPass').value = '';
+
+            if(!className) { slcName.disabled = true; return; }
+
+            const students = dataHocSinh.filter(row => String(row[3]).trim() === className);
+            students.forEach(s => {
+                slcName.innerHTML += `<option value="${s[4]}" data-pass="${s[5]}" data-fullname="${s[1]}">${s[1]}</option>`;
+            });
+            slcName.disabled = false;
+        }
+
+        function checkSelection() {
+            const val = document.getElementById('slcName').value;
+            if(val) {
+                document.getElementById('passArea').classList.remove('hidden');
+                document.getElementById('txtPass').focus();
+            } else {
+                document.getElementById('passArea').classList.add('hidden');
+            }
+        }
+
+        // 4. Xử lý Đăng nhập Học Sinh
+        function startExam() {
+            const slcName = document.getElementById('slcName');
+            const enteredPass = document.getElementById('txtPass').value.trim();
+            const selectedOpt = slcName.options[slcName.selectedIndex];
+
+            if(!slcName.value || !enteredPass) {
+                alert("Vui lòng chọn tên và nhập mật khẩu!");
+                return;
+            }
+
+            const correctPass = selectedOpt.getAttribute('data-pass');
+            const fullName = selectedOpt.getAttribute('data-fullname');
+            const grade = document.getElementById('slcGrade').value;
+            const className = document.getElementById('slcClass').value;
+            
+            // Ép buộc lấy từ file config.js
+            if (typeof CONFIG === 'undefined' || !CONFIG.SCHOOL_NAME) {
+                alert("Lỗi: Không tìm thấy khai báo SCHOOL_NAME trong file config.js");
+                return;
+            }
+
+            if(enteredPass === String(correctPass).trim()) {
+                sessionStorage.setItem('exam_name', fullName);
+                sessionStorage.setItem('exam_class', className);
+                sessionStorage.setItem('exam_grade', grade);
+                sessionStorage.setItem('exam_school', CONFIG.SCHOOL_NAME.trim());
+                sessionStorage.setItem('user_role', 'student');
+
+                window.location.href = "student.html"; 
+            } else {
+                alert("Mật khẩu không chính xác!");
+                document.getElementById('txtPass').value = '';
+                document.getElementById('txtPass').focus();
+            }
+        }
+    </script>
+</body>
+</html>
